@@ -65,17 +65,21 @@ function A (i) { this.i = i }
 function B (i) { this.i = i }
 assert.diff(A, B)
 const a = new A(3)
+assert.same(a, new A(3))
+assert.diff(a, new A(4))
 const b = new B(3)
 assert.diff(a, b)
 const s = new Set([x, a])
-const r = new Set([x, b])
-assert.diff(s, r)
+assert.same(s, new Set(s))
+assert.same(s, new Set([x, a]))
+assert.diff(s, new Set([x, b]))
 const m = new Map([[x, a], [y, a]])
-const n = new Map([[x, a], [y, b]])
-assert.diff(m, n)
-const arraya = new Array(3, 2, 1, {a: s})
-const arrayb = new Array(3, 2, 1, {a: m})
-assert.diff(arraya, arrayb)
+assert.diff(m, new Map([[x, a], [y, b]]))
+
+class C{}
+assert.diff(C, A)
+const c = new C()
+assert.same(c, new C())
 // const stringb = 'ab'
 // class STR extends String{
 //   constructor(s) {super(s)}
