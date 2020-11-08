@@ -9,7 +9,8 @@ describe('Test objects', () => {
       {i: 2},
       {j: 1},
       {j: 2},
-      {i: 1, j:2}
+      {i: 1, j:2},
+      {f: function(){}}
     ]
     describe('A value must be equal itself', () => {
       for(const v of values) {
@@ -36,14 +37,15 @@ describe('Test objects', () => {
     const n = random.number()
     const s = random.words()
     const values = [
-      [{}, {}],
-      [{i: n}, {i: n}],
-      [{i: n, j: s}, {i: n, j: s}],
+      // [{}, {}],
+      // [{i: n}, {i: n}],
+      // [{i: n, j: s}, {i: n, j: s}],
+      [{f: function(){}}, {f: function(){}}],
     ]
     describe('A value must be equal to any other with same properties', () => {
       for(const v of values) {
         test(`${Object.entries(v[0])} should be equal to ${Object.entries(v[1])}`, () => {
-          const res = isEqual(v[0], v[1])
+          const res = isEqual(v[0], v[1], {debug: true})
           expect(res).toBe(true)
         })
       }

@@ -19,7 +19,7 @@ function getAllPropertyNames(obj) {
 const isIterable = obj => obj && typeof obj[Symbol.iterator] === 'function'
 const objtypeOf = obj => obj && obj.constructor
 
-const isEqual = (x, y, { debug = false } = {}) => {
+const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
   const exist = new Set()
   const logger = debug ? console : { log: () => {} }
   const _isEqual = (x, y, spaces = '') => {
@@ -41,21 +41,25 @@ const isEqual = (x, y, { debug = false } = {}) => {
       return _TRUE(1)
     }
 
-    // Compare primitives and functions.
-    // Check if both arguments link to the same object.
-    // Especially useful on the step where we compare prototypes
+    // Compare primitives and same objects (Objects assign by reference, not cloned).
     if (x === y) { return _TRUE('x === y') }
     if (!(x instanceof Object)) { return _FALSE('x is not an obj') }
     if (!(y instanceof Object)) { return _FALSE('y is not an obj') }
     if (x.length !== y.length) { return _FALSE('x.length !== y.length') }
     if (x.size !== y.size) { return _FALSE('x.size !== y.size') }
     if (x.constructor !== y.constructor) { return _FALSE('x.constructor !== y.constructor') }
-    if (x.prototype !== y.prototype) { return _FALSE('x.prototype !== y.prototype') } // This seems to me pointless
+    // At this point x and y have the same type. So we don't need to duplicate tests for x and y hereinafter
 
-    // At this point x and y have the same type
+    if (!strictly && typeof x === 'function') {
+      // Usually two functions are the same if they refere the same code (in same context)
+      // ... but in order two compare if two comapre thow function in a relaxed way we may compare code character by character
+      return _RETURN(x.toString() === y.toString(), `Function (non strict mode): x.toString() === y.toString()`)
+    }
 
-    const objtype = objtypeOf(x) // We shouldn't compare instanceof as it includes subclasses
-    if (objtype === String || objtype === Number || objtype === Boolean || objtype == Function) {
+    if (x.prototype !== y.prototype) { return _FALSE('x.prototype !== y.prototype') }
+
+    const objtype = objtypeOf(x) // We shouldn't use/compare "instanceof" as it includes subclasses
+    if (objtype === String || objtype === Number || objtype === Boolean) {
       return _RETURN(x.toString() === y.toString(), `${objtype.name}: x.toString() === y.toString()`)
     }
     if (objtype === Date) {
@@ -87,15 +91,13 @@ const isEqual = (x, y, { debug = false } = {}) => {
       if (!check) { return _FALSE('At least one iterable value is not equal') }
     }
 
-    if(x instanceof String || x instanceof Function || x instanceof RegExp
-      || x instanceof Number  || x instanceof Boolean || Object.keys(x).length > 0) {
+    if(x instanceof String || x instanceof RegExp || x instanceof Number  || x instanceof Boolean) {
       return _RETURN(x.toString() === y.toString(), `Every property match and x.toString() === y.toString()`)
     }
     if(x instanceof Date) {
       return _RETURN(x.getTime() === y.getTime(), `Every property match and x.getTime() === y.getTime()`)
     }
-
-    if(props.length > 0 || iterable) {
+    if(props.length > 0 || iterable || x instanceof Function ) {
       return _TRUE(`Every property and/or member match`)
     }
 
