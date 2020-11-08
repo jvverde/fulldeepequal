@@ -1,0 +1,2 @@
+# fulldeepequal
+Full deep objects
