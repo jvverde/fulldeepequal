@@ -80,6 +80,12 @@ class C{}
 assert.diff(C, A)
 const c = new C()
 assert.same(c, new C())
+class D extends C {}
+assert.diff(D, C)
+const d = new D()
+assert.diff(d, c)
+assert.same(d, new D())
+
 // const stringb = 'ab'
 // class STR extends String{
 //   constructor(s) {super(s)}
