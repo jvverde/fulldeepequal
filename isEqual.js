@@ -20,7 +20,7 @@ const isIterable = obj => obj && typeof obj[Symbol.iterator] === 'function'
 const objtypeOf = obj => obj && obj.constructor
 
 const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
-  const exist = new Set()
+  const exist = new Map()
   const logger = debug ? console : { log: () => {} }
   const _isEqual = (x, y, spaces = '') => {
     const tab = spaces
@@ -70,10 +70,10 @@ const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
     if (exist.has(x) || exist.has(y)) { // Check if we are in a cyclical case
       const a = exist.get(x)
       const b = exist.get(y)
-      return _RETURN(a === b, 'exist.get(x) === exist.get(y)')
+      return _RETURN(a === b || (a === y && b === x), 'exist.get(x) === exist.get(y)')
     }
-    exist.add(x)
-    exist.add(y)
+    exist.set(x, y)
+    exist.set(y, x)
     // Now compare prototypes
     const px = Object.getPrototypeOf(x)
     const py = Object.getPrototypeOf(y)
