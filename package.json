@@ -1,6 +1,6 @@
 {
   "name": "isclone",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Full deep objects compare",
   "main": "isClone.js",
   "directories": {

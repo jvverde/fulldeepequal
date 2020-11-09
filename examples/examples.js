@@ -102,6 +102,8 @@ assert.ne(s, new Set([x, b]))
 
 //Maps
 const m = new Map([[x, a], [y, a]])
+assert.eq(m, new Map(m))
+assert.eq(m, new Map([[x, a], [y, a]]))
 assert.ne(m, new Map([[x, a], [y, b]]))
 
 // Class instances

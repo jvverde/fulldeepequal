@@ -89,6 +89,8 @@ isClone(s, new Set([x, b]))  // FALSE
 
 //Maps
 const m = new Map([[x, a], [y, a]])
+isClone(m, new Map(m))  // TRUE
+isClone(m, new Map([[x, a], [y, a]]))  // TRUE
 isClone(m, new Map([[x, a], [y, b]]))  // FALSE
 
 // Class instances
@@ -209,4 +211,3 @@ isClone(objb, obja)  // FALSE
 objb.inc = () => {}
 isClone(objb, new B(1))  // FALSE
 ```
-
