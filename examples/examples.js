@@ -86,6 +86,22 @@ const d = new D()
 assert.diff(d, c)
 assert.same(d, new D())
 
+class E{
+  constructor (i) { this.i = i }
+  inc() { this.i++ }
+}
+const e = new E(0)
+assert.same(e, new E(0))
+
+class DE{
+  constructor (i) { this.e = new E(i) }
+}
+const de = new DE(0)
+assert.same(de, new DE(0))
+assert.same(new DE(c), new DE(c))
+assert.same(new DE(de), new DE(de))
+
+
 // const stringb = 'ab'
 // class STR extends String{
 //   constructor(s) {super(s)}

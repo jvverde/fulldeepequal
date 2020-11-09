@@ -97,7 +97,7 @@ const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
     if(x instanceof Date) {
       return _RETURN(x.getTime() === y.getTime(), `Every property match and x.getTime() === y.getTime()`)
     }
-    if(props.length > 0 || iterable || x instanceof Function ) {
+    if(props.size > 0 || iterable || x instanceof Function ) {
       return _TRUE(`Every property and/or member match`)
     }
 
