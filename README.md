@@ -12,6 +12,7 @@ npm install isclone
 ## Usage
 
 ```javascript
+const isClone = require('isClone')
 //Primitive types
 isClone(null, undefined)  // FALSE
 isClone(undefined, undefined)  // TRUE
