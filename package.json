@@ -1,6 +1,6 @@
 {
   "name": "isclone",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Full deep objects compare",
   "main": "isClone.js",
   "directories": {
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jvverde/fulldeepequal.git"
+    "url": "git+https://github.com/jvverde/isClone.git"
   },
   "keywords": [
     "object",
