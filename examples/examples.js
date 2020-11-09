@@ -20,8 +20,8 @@ const debug = !!argv.debug
 let cnt = 1
 const show = argv.show ? (...args) => args : () => ''
 const assert = {
-  eq: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'OK' : 'FAIL', cnt++, show(x, 'eq', y)),
-  ne: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'FAIL' : 'OK', cnt++, show(x, 'ne', y))
+  eq: (x, y, a) => console.log(cnt++, isClone(x, y, { ...a, debug }) ? 'OK' : 'FAIL', show(x, 'eq', y)),
+  ne: (x, y, a) => console.log(cnt++, isClone(x, y, { ...a, debug }) ? 'FAIL' : 'OK', show(x, 'ne', y))
 }
 
 assert.ne(null, undefined)
@@ -100,6 +100,8 @@ class DE{
 }
 const de = new DE(0)
 assert.eq(de, new DE(0))
+de.x = 'x'
+assert.ne(de, new DE(0))
 assert.eq(new DE(c), new DE(c))
 assert.eq(new DE(de), new DE(de))
 assert.eq(new DE(m), new DE(m))
@@ -137,10 +139,49 @@ assert.eq(d1st, new Date('December 1, 1995 00:00:00'))
 d1st.label = 'label'
 assert.ne(d1st, new Date('December 1, 1995 00:00:00'))
 
+const regexp = /^.+$/imsg
+assert.eq(regexp, /^.+$/imsg)
+regexp.label = 'label'
+assert.ne(regexp, /^.+$/imsg)
+
+
 const array = [1, 2]
 assert.eq(array, [1, 2])
 array.label = 'label'
 assert.ne(array, [1, 2])
+
+const set = new Set([1, 2])
+assert.eq(set, new Set([1, 2]))
+set.label = 'label'
+assert.ne(set, new Set([1, 2]))
+
+const map = new Map([[1, 2], [2,3]])
+assert.eq(map, new Map([[1, 2], [2,3]]))
+map.label = 'label'
+assert.ne(map, new Map([[1, 2], [2,3]]))
+
+// Assert with prototype inheritance
+function A(n = 1) { this.n = n }
+A.prototype.inc = function(n) { this.n += n }
+const obja = new A(1)
+assert.eq(obja, new A(1))
+assert.ne(obja, new A(2))
+
+function B(n = 1) { A.call(this, n) }
+assert.ne(obja, new B(1))
+// https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Inheritance
+B.prototype = Object.create(A.prototype)
+assert.ne(obja, new B(1))
+B.prototype.dec = function(n) { this.inc(-n); }
+B.prototype.constructor = B
+
+assert.ne(A, B)
+const objb = new B(1)
+assert.eq(objb, new B(1))
+assert.ne(objb, obja)
+objb.inc = () => {}
+assert.ne(objb, new B(1))
+
 
 // function STRB(s){
 //   String.call(this, s)
