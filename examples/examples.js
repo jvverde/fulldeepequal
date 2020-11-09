@@ -124,18 +124,24 @@ assert.ne(new STR('abc'), abc)
 abc.label = 'label'
 assert.ne(abc, new String('abc'))
 
-console.log(Object.entries(abc), abc.label)
-console.log(abc.valueOf())
+const one = new Number(1)
+one.label = 'label'
+assert.ne(one, new Number(1))
 
-function getAllPropertyNames(obj) {
-  const s = new Set()
-  do {
-      Object.getOwnPropertyNames(obj).forEach(p => { s.add(p) })
-  } while (obj = Object.getPrototypeOf(obj))
-  return [...s]
-}
-console.log(getAllPropertyNames(abc))
-console.log(Object.keys(abc))
+const bool = new Boolean(true)
+bool.label = 'label'
+assert.ne(bool, new Boolean(true))
+
+const d1st = new Date('December 1, 1995 00:00:00')
+assert.eq(d1st, new Date('December 1, 1995 00:00:00'))
+d1st.label = 'label'
+assert.ne(d1st, new Date('December 1, 1995 00:00:00'))
+
+const array = [1, 2]
+assert.eq(array, [1, 2])
+array.label = 'label'
+assert.ne(array, [1, 2])
+
 // function STRB(s){
 //   String.call(this, s)
 // }

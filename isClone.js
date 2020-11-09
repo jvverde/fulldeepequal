@@ -18,6 +18,13 @@ function getAllPropertyNames(obj) {
 
 const isIterable = obj => obj && typeof obj[Symbol.iterator] === 'function'
 const objtypeOf = obj => obj && obj.constructor
+const cntKeys = obj => {
+  if (obj && obj instanceof Object) {
+    const len = obj instanceof String ? obj.length : 0
+    return Object.keys(obj).length - len
+  }
+  return 0
+}
 
 const isClone = (x, y, { debug = false, strictly = true  } = {}) => {
   const exist = new Map()
@@ -58,15 +65,20 @@ const isClone = (x, y, { debug = false, strictly = true  } = {}) => {
 
     if (x.prototype !== y.prototype) { return _FALSE('x.prototype !== y.prototype') }
 
-    const objtype = objtypeOf(x) // We shouldn't use/compare "instanceof" as it includes subclasses
-    if (objtype === String || objtype === Number || objtype === Boolean) {
-      return _RETURN(x.toString() === y.toString(), `${objtype.name}: x.toString() === y.toString()`)
-    }
-    if (objtype === Date) {
-      // Never use .tostring() for a Date object. It may(?) discard milliseconds
-      return _RETURN(x.getTime() === y.getTime(), 'Date: x.getTime() === y.getTime()')
-    }
+    const xkeys = cntKeys(x)
+    const ykeys = cntKeys(y)
+    if (xkeys !== ykeys) { return _FALSE('xkeys !== ykeys') }
 
+    if (xkeys === 0) { // objects without any keys may be compared early
+      const objtype = objtypeOf(x) // We shouldn't use/compare "instanceof" as it includes subclasses
+      if (objtype === String || objtype === Number || objtype === Boolean) {
+        return _RETURN(x.toString() === y.toString(), `${objtype.name}: x.toString() === y.toString()`)
+      }
+      if (objtype === Date) {
+        // Never use .tostring() for a Date object. It may(?) discard milliseconds
+        return _RETURN(x.getTime() === y.getTime(), 'Date: x.getTime() === y.getTime()')
+      }
+    }
     if (exist.has(x) || exist.has(y)) { // Check if we are in a cyclical case
       const a = exist.get(x)
       const b = exist.get(y)
