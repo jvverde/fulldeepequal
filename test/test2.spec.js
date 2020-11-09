@@ -1,4 +1,4 @@
-const isEqual = require('../isEqual')
+const isClone = require('../isClone')
 const { random, date } = require('faker')
 
 describe('Test builtin objects', () => {
@@ -15,7 +15,7 @@ describe('Test builtin objects', () => {
     ]
     for(const v of values) {
       test(`${v[0]} should NOT be equal to ${v[1]}`, () => {
-        const res = isEqual(...v)
+        const res = isClone(...v)
         expect(res).toBe(false)
       })
     }
@@ -28,7 +28,7 @@ describe('Test builtin objects', () => {
     ]
     for(const v of values) {
       test(`${v[0]} should NOT be equal to ${v[1].constructor.name}(${v[1]})`, () => {
-        const res = isEqual(...v)
+        const res = isClone(...v)
         expect(res).toBe(false)
       })
     }
@@ -45,7 +45,7 @@ describe('Test builtin objects', () => {
     ]
     for(const v of values) {
       test(`${v[0].constructor.name}(${v[0]}) should be equal to ${v[1].constructor.name}(${v[1]})`, () => {
-        const res = isEqual(...v)
+        const res = isClone(...v)
         expect(res).toBe(true)
       })
     }
@@ -61,7 +61,7 @@ describe('Test builtin objects', () => {
     ]
     for(const v of values) {
       test(`${v[0].constructor.name}(${v[0]}) should NOT be equal to ${v[1].constructor.name}(${v[1]})`, () => {
-        const res = isEqual(...v)
+        const res = isClone(...v)
         expect(res).toBe(false)
       })
     }

@@ -1,4 +1,4 @@
-const isEqual = require('../isEqual')
+const isClone = require('../isClone')
 const yargs = require('yargs');
 
 const argv = yargs
@@ -20,8 +20,8 @@ const debug = !!argv.debug
 let cnt = 1
 const show = argv.show ? (...args) => args : () => ''
 const assert = {
-  eq: (x, y, a) => console.log(isEqual(x, y, { ...a, debug }) ? 'OK' : 'ne', cnt++, show(x, 'eq', y)),
-  ne: (x, y, a) => console.log(isEqual(x, y, { ...a, debug }) ? 'ne' : 'OK', cnt++, show(x, 'ne', y))
+  eq: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'OK' : 'ne', cnt++, show(x, 'eq', y)),
+  ne: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'ne' : 'OK', cnt++, show(x, 'ne', y))
 }
 
 assert.ne(null, undefined)

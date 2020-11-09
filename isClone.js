@@ -19,10 +19,10 @@ function getAllPropertyNames(obj) {
 const isIterable = obj => obj && typeof obj[Symbol.iterator] === 'function'
 const objtypeOf = obj => obj && obj.constructor
 
-const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
+const isClone = (x, y, { debug = false, strictly = true  } = {}) => {
   const exist = new Map()
   const logger = debug ? console : { log: () => {} }
-  const _isEqual = (x, y, spaces = '') => {
+  const _isClone = (x, y, spaces = '') => {
     const tab = spaces
     spaces += '  '
     function _FALSE(cond) {
@@ -77,17 +77,17 @@ const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
     // Now compare prototypes
     const px = Object.getPrototypeOf(x)
     const py = Object.getPrototypeOf(y)
-    if (!_isEqual(px, py, tab)) { return _FALSE('Prototypes are different') }
+    if (!_isClone(px, py, tab)) { return _FALSE('Prototypes are different') }
 
     // Compare every properties
     const props = new Set([...getAllPropertyNames(x), ...getAllPropertyNames(y)])
-    const check = [...props].every(p => _isEqual(x[p], y[p], tab))
+    const check = [...props].every(p => _isClone(x[p], y[p], tab))
     if (!check) return _FALSE("At least one property doesn't match")
 
     const iterable = isIterable(x)
     if (iterable && !(x instanceof String)) { //iterate except if x is a Strings
       const [xo, yo] = [ [...x], [...y] ]
-      const check = xo.every((v, i) => _isEqual(v, yo[i], tab))
+      const check = xo.every((v, i) => _isClone(v, yo[i], tab))
       if (!check) { return _FALSE('At least one iterable value is not equal') }
     }
 
@@ -105,7 +105,7 @@ const isEqual = (x, y, { debug = false, strictly = true  } = {}) => {
     const result = x.toString() === y.toString()
     return _RETURN(result, 'Last attempt using "x.toString() === y.toString()"')
   }
-  return _isEqual(x,y)
+  return _isClone(x,y)
 }
 
-module.exports = isEqual
+module.exports = isClone

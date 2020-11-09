@@ -1,8 +1,8 @@
 {
-  "name": "fulldeepequal",
-  "version": "0.0.1",
+  "name": "isclone",
+  "version": "0.0.2",
   "description": "Full deep objects compare",
-  "main": "isEqual.js",
+  "main": "isClone.js",
   "directories": {
     "test": "test"
   },

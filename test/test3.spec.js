@@ -1,4 +1,4 @@
-const isEqual = require('../isEqual')
+const isClone = require('../isClone')
 const { random, date } = require('faker')
 
 describe('Test objects', () => {
@@ -15,7 +15,7 @@ describe('Test objects', () => {
     describe('A value must be equal itself', () => {
       for(const v of values) {
         test(`${Object.entries(v)} should be equal to ${Object.entries(v)}`, () => {
-          const res = isEqual(v, v)
+          const res = isClone(v, v)
           expect(res).toBe(true)
         })
       }
@@ -26,7 +26,7 @@ describe('Test objects', () => {
         s.delete(v)
         for(const w of s) {
           test(`${Object.entries(v)} should NOT be equal to ${Object.entries(w)}`, () => {
-            const res = isEqual(v, w)
+            const res = isClone(v, w)
             expect(res).toBe(false)
           })
         }
@@ -45,7 +45,7 @@ describe('Test objects', () => {
     describe('A value must be equal to any other with same properties', () => {
       for(const v of values) {
         test(`${Object.entries(v[0])} should be equal to ${Object.entries(v[1])}`, () => {
-          const res = isEqual(v[0], v[1], {debug: true})
+          const res = isClone(v[0], v[1], {debug: true})
           expect(res).toBe(true)
         })
       }
