@@ -20,8 +20,8 @@ const debug = !!argv.debug
 let cnt = 1
 const show = argv.show ? (...args) => args : () => ''
 const assert = {
-  eq: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'OK' : 'ne', cnt++, show(x, 'eq', y)),
-  ne: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'ne' : 'OK', cnt++, show(x, 'ne', y))
+  eq: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'OK' : 'FAIL', cnt++, show(x, 'eq', y)),
+  ne: (x, y, a) => console.log(isClone(x, y, { ...a, debug }) ? 'FAIL' : 'OK', cnt++, show(x, 'ne', y))
 }
 
 assert.ne(null, undefined)
@@ -113,11 +113,29 @@ assert.eq(x, y)
 x.i = y
 y.i = x
 assert.eq(x, y)
-// const stringb = 'ab'
-// class STR extends String{
-//   constructor(s) {super(s)}
-// }
-// const str = new STR('abc')
+
+const abc = new String('abc')
+class STR extends String{
+  constructor(s) {super(s)}
+}
+assert.eq(new STR('abc'), new STR('abc'))
+assert.ne(new STR('abc'), abc)
+
+abc.label = 'label'
+assert.ne(abc, new String('abc'))
+
+console.log(Object.entries(abc), abc.label)
+console.log(abc.valueOf())
+
+function getAllPropertyNames(obj) {
+  const s = new Set()
+  do {
+      Object.getOwnPropertyNames(obj).forEach(p => { s.add(p) })
+  } while (obj = Object.getPrototypeOf(obj))
+  return [...s]
+}
+console.log(getAllPropertyNames(abc))
+console.log(Object.keys(abc))
 // function STRB(s){
 //   String.call(this, s)
 // }
