@@ -64,12 +64,6 @@ assert.eq(new BigInt64Array([3n, -3n]), new BigInt64Array([3n, -3n]))
 assert.ne(new BigInt64Array([3n, -3n]), new BigInt64Array([3n, 0n]))
 assert.eq(new Float64Array([Math.PI, Math.E, 1/3, Math.sqrt(2)]), new Float64Array([Math.PI, Math.E, 1/3, Math.sqrt(2)]))
 
-// Functions (by default two function are equal if and only if they both refere to same code/object)
-const f = function() {}
-const g = function() {}
-assert.ne(f, g)
-assert.eq(f, g, {strictly: false})
-
 //Literal Objects
 const x = { i: 1 }
 const y = { i: 1 }
@@ -223,3 +217,39 @@ assert.eq(objb, new B(1))
 assert.ne(objb, obja)
 objb.inc = () => {}
 assert.ne(objb, new B(1))
+
+// Strictly
+
+// By default two function are equal if and only if they both refere to same code/object)
+const f = function() {}
+const g = function() {}
+assert.ne(f, g)
+assert.eq(f, g, {strictly: false})
+
+const C1 = class{}
+const C2 = class{}
+assert.ne(C1, C2)
+assert.eq(C1, C2, {strictly: false}) // Constructores are distinct but are string (C1.toString() === C2.toString())
+const c1 = new C1()
+const c2 = new C2()
+assert.ne(c1, c2)
+assert.eq(c1, c2, {strictly: false})
+
+class C3{}
+const c3 = new C3()
+assert.ne(c1, c3, {strictly: true})
+assert.ne(c1, c3, {strictly: false}) // the constructors are different
+
+const C4 = class{/*note*/}
+const c4 = new C4()
+assert.ne(c1, c4, {strictly: false}) // the constructors are string different
+
+const F1 = function(i) { this.i = i }
+const F2 = function(i) { this.i = i }
+assert.ne(F1, F2)
+assert.eq(F1, F2, {strictly: false})
+const f1 = new F1(3)
+const f2 = new F2(3)
+assert.ne(f1, f2)
+assert.eq(f1, f2, {strictly: false})
+

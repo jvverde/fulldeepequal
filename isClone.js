@@ -54,7 +54,12 @@ const isClone = (x, y, { debug = false, strictly = true  } = {}) => {
     if (!(y instanceof Object)) { return _FALSE('y is not an obj') }
     if (x.length !== y.length) { return _FALSE('x.length !== y.length') }
     if (x.size !== y.size) { return _FALSE('x.size !== y.size') }
-    if (x.constructor !== y.constructor) { return _FALSE('x.constructor !== y.constructor') }
+    if (x.constructor !== y.constructor) {
+      if (strictly) return _FALSE('x.constructor !== y.constructor')
+      else if(x.constructor.toString() !== y.constructor.toString()) {
+        return _FALSE('x.constructor.toString() !== y.constructor.toString()')
+      }
+    }
     // At this point x and y have the same type. So we don't need to duplicate tests for x and y hereinafter
 
     if (!strictly && typeof x === 'function') {
