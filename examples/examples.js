@@ -61,6 +61,9 @@ assert.ne([3, 2], [3, 2, 1])
 assert.eq(new Array(5), new Array(5))
 assert.eq(new Array(), [])
 assert.ne(new Array(1), [undefined])
+const ea = []
+ea.length = 1
+assert.eq(new Array(1), ea)
 
 //Binary arrays
 assert.eq(new Int8Array([3, -3]), new Int8Array([3, -3]))
@@ -69,10 +72,15 @@ assert.eq(new BigInt64Array([3n, -3n]), new BigInt64Array([3n, -3n]))
 assert.ne(new BigInt64Array([3n, -3n]), new BigInt64Array([3n, 0n]))
 assert.eq(new Float64Array([Math.PI, Math.E, 1/3, Math.sqrt(2)]), new Float64Array([Math.PI, Math.E, 1/3, Math.sqrt(2)]))
 
+//Objects
+assert.eq(new Object({i: 1}), new Object({i: 1}))
+assert.ne(new Object({j: 1}), new Object({i: 1}))
+
 //Literal Objects
 const x = { i: 1 }
 const y = { i: 1 }
 assert.eq(x, y)
+assert.eq(x, new Object({i: 1}))
 
 //Nest Objects
 const z = { a: x }
