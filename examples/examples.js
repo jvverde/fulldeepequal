@@ -55,9 +55,14 @@ assert.eq(/^$/igsm, /^$/sgmi)
 assert.ne(/^$/igsm, /^$/im)
 assert.ne(/^.$/, /^$/)
 
-//Arays and binary arrays
+//Arrays
 assert.eq([3, 2], [3, 2])
 assert.ne([3, 2], [3, 2, 1])
+assert.eq(new Array(5), new Array(5))
+assert.eq(new Array(), [])
+assert.ne(new Array(1), [undefined])
+
+//Binary arrays
 assert.eq(new Int8Array([3, -3]), new Int8Array([3, -3]))
 assert.ne(new Int8Array([3, -3]), new Int8Array([3, -3, 4]))
 assert.eq(new BigInt64Array([3n, -3n]), new BigInt64Array([3n, -3n]))
@@ -252,4 +257,3 @@ const f1 = new F1(3)
 const f2 = new F2(3)
 assert.ne(f1, f2)
 assert.eq(f1, f2, {strictly: false})
-
