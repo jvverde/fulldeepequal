@@ -73,10 +73,12 @@ assert.ne(new BigInt64Array([3n, -3n]), new BigInt64Array([3n, 0n]))
 assert.eq(new Float64Array([Math.PI, Math.E, 1/3, Math.sqrt(2)]), new Float64Array([Math.PI, Math.E, 1/3, Math.sqrt(2)]))
 
 //Objects
+assert.eq(new Object(), new Object())
 assert.eq(new Object({i: 1}), new Object({i: 1}))
 assert.ne(new Object({j: 1}), new Object({i: 1}))
 
 //Literal Objects
+assert.eq({}, {})
 const x = { i: 1 }
 const y = { i: 1 }
 assert.eq(x, y)
@@ -253,7 +255,9 @@ const c3 = new C3()
 assert.ne(c1, c3, {strictly: true})
 assert.ne(c1, c3, {strictly: false}) // the constructors are different
 
-const C4 = class{/*note*/}
+const C4 = class{
+  // note
+}
 const c4 = new C4()
 assert.ne(c1, c4, {strictly: false}) // the constructors are string different
 
@@ -265,3 +269,16 @@ const f1 = new F1(3)
 const f2 = new F2(3)
 assert.ne(f1, f2)
 assert.eq(f1, f2, {strictly: false})
+
+//Other cases
+
+class INT extends Number{
+  constructor(i = 0) {
+    super(i)
+    // this.label = 'int'
+  }
+  // get tag() { return this.label }
+  // get val() { return this }
+}
+
+assert.eq(new INT(3), new INT(3))
