@@ -36,7 +36,7 @@ const cmpmethod = (x, y, method) => {
   try {
     b = y[method]()
   } catch (e) {
-    b === undefined
+    b = undefined
   }
   return a === b
 }
@@ -127,11 +127,13 @@ const isClone = (x, y, { debug = false, strictly = true  } = {}) => {
       if (!check) { return _FALSE('At least one iterable value is not equal') }
     }
 
-    if(x instanceof String || x instanceof RegExp || x instanceof Number  || x instanceof Boolean) {
+    if(x instanceof Number  || x instanceof Boolean || x instanceof BigInt) {
+      const cmp = cmpmethod(x,y,'valueOf')
+      return _RETURN(cmp, `Every property match! Then (x.valueOf() === y.valueOf()) => ${cmp}`)
+    } else if(x instanceof String || x instanceof RegExp) {
       const cmp = cmpmethod(x,y,'toString')
       return _RETURN(cmp, `Every property match! Then (x.toString() === y.toString()) => ${cmp}`)
-    }
-    if(x instanceof Date) {
+    } else if(x instanceof Date) {
       const cmp = cmpmethod(x,y,'getTime')
       return _RETURN(cmp, `Date: Every property match! Then (x.getTime() === y.getTime()) => ${cmp}`)
     }

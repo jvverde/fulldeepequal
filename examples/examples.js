@@ -272,7 +272,7 @@ assert.eq(f1, f2, {strictly: false})
 
 //Other cases
 
-class INT extends Number{
+class Int extends Number{
   constructor(i = 0) {
     super(i)
     // this.label = 'int'
@@ -281,4 +281,13 @@ class INT extends Number{
   // get val() { return this }
 }
 
-assert.eq(new INT(3), new INT(3))
+assert.eq(new Int(3), new Int(3))
+
+class Long extends Int{
+  constructor(i = 0) {
+    super(i)
+  }
+}
+
+assert.eq(new Long(1), new Long(1))
+assert.ne(new Long(1), new Long(2))
