@@ -27,13 +27,18 @@ const cntKeys = obj => {
 }
 
 const cmpmethod = (x, y, method) => {
-  let cmp = false
+  let a, b
   try {
-    cmp = x[method]() === y[method]()
-  } catch (e){
-    console.warn(`Error trying to compare with ${method} method of`, x, y, e)
+    a = x[method]()
+  } catch (e) {
+    a = undefined
   }
-  return cmp
+  try {
+    b = y[method]()
+  } catch (e) {
+    b === undefined
+  }
+  return a === b
 }
 
 const isClone = (x, y, { debug = false, strictly = true  } = {}) => {
