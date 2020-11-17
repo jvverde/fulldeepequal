@@ -1,7 +1,9 @@
 const isClone = require('../isClone')
-// const { random } = require('faker')
+const { random } = require('faker')
 
 describe('Test objects', () => {
+  const n = random.number()
+  const s = random.words(10)
   describe('Simple object (All different)', () => {
     const values = [
       {},
@@ -35,15 +37,14 @@ describe('Test objects', () => {
   })
   describe('Simple object (All equals)', () => {
     const values = [
-      // [{}, {}],
-      // [{i: n}, {i: n}],
-      // [{i: n, j: s}, {i: n, j: s}],
-      [{ f: function () {} }, { f: function () {} }]
+      [{}, {}],
+      [{i: n}, {i: n}],
+      [{i: n, j: s}, {i: n, j: s}],
     ]
     describe('A value must be equal to any other with same properties', () => {
       for (const v of values) {
         test(`${Object.entries(v[0])} should be equal to ${Object.entries(v[1])}`, () => {
-          const res = isClone(v[0], v[1], { debug: true })
+          const res = isClone(v[0], v[1])
           expect(res).toBe(true)
         })
       }

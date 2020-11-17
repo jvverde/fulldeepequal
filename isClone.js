@@ -28,16 +28,15 @@ const cntKeys = obj => {
 
 const cmpmethod = (x, y, method) => {
   let a, b
-  try {
-    a = x[method]()
-  } catch (e) {
-    a = undefined
-  }
-  try {
-    b = y[method]()
-  } catch (e) {
-    b = undefined
-  }
+  try { a = x[method]() } catch (e) { a = undefined }
+  try { b = y[method]() } catch (e) { b = undefined }
+  return a === b
+}
+
+const cmpprop = (x, y, prop) => {
+  let a, b
+  try { a = x[prop] } catch (e) { a = undefined }
+  try { b = y[prop] } catch (e) { b = undefined }
   return a === b
 }
 
@@ -68,7 +67,7 @@ const isClone = (x, y, { debug = false, strictly = true } = {}) => {
     if (!(x instanceof Object)) { return _FALSE('x is not an obj') }
     if (!(y instanceof Object)) { return _FALSE('y is not an obj') }
     if (x.length !== y.length) { return _FALSE('x.length !== y.length') }
-    if (x.size !== y.size) { return _FALSE('x.size !== y.size') }
+    if (!cmpprop(x, y, 'size')) { return _FALSE('x.size !== y.size') }
     if (x.constructor !== y.constructor) {
       if (strictly) return _FALSE('x.constructor !== y.constructor')
       else {
