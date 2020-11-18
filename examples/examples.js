@@ -272,10 +272,10 @@ assert.ne(objb, new B(1))
 class Int extends Number {
   constructor (i = 0) {
     super(i)
-    // this.label = 'int'
+    this.label = 'int'
   }
-  // get tag() { return this.label }
-  // get val() { return this }
+  get tag() { return this.label }
+  get val() { return this }
 }
 
 assert.eq(new Int(3), new Int(3))
