@@ -43,20 +43,19 @@ const cmpprop = (x, y, prop) => {
 const isClone = (x, y, { debug = false, strictly = true } = {}) => {
   const exist = new Map()
   const logger = debug ? console : { log: () => {} }
-  const _isClone = (x, y, spaces = '') => {
-    const tab = spaces
-    spaces += '  '
-    function _FALSE (cond) {
-      logger.log(`${tab} false <= ${cond} :`, x, ' <=> ', y)
+  const _isClone = (x, y, prefix = '') => {
+    logger.log(`${prefix}x:`, x)
+    logger.log(`${prefix}y:`, y)
+
+    const _FALSE = (cond) => {
+      logger.log(`${prefix}false <= ${cond} :`, x, ' <=> ', y)
       return false
     }
-    function _TRUE (cond) {
-      logger.log(`${tab} true <= ${cond} :`, x, ' <=> ', y)
+    const _TRUE = (cond) => {
+      logger.log(`${prefix}true <= ${cond} :`, x, ' <=> ', y)
       return true
     }
-    const _RETURN = (bool, line) => {
-      return bool ? _TRUE(line) : _FALSE(line)
-    }
+    const _RETURN = (bool, line) => { return bool ? _TRUE(line) : _FALSE(line) }
 
     if (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y)) {
       return _TRUE(1)
@@ -112,17 +111,24 @@ const isClone = (x, y, { debug = false, strictly = true } = {}) => {
     // Now compare prototypes
     const px = Object.getPrototypeOf(x)
     const py = Object.getPrototypeOf(y)
-    if (!_isClone(px, py, tab)) { return _FALSE('Prototypes are different') }
+    if (!_isClone(px, py, prefix + 'prototype:')) { return _FALSE('Prototypes are different') }
 
     // Compare every properties
     const props = new Set([...getAllPropertyNames(x), ...getAllPropertyNames(y)])
-    const check = [...props].every(p => _isClone(x[p], y[p], tab))
+    for(const name of ['arguments', 'caller', 'callee']) {
+      // Remove to avoid
+      // TypeError: 'caller', 'callee', and 'arguments' properties may not be
+      // accessed on strict mode functions or the arguments objects for calls to them
+      props.delete(name)
+    }
+
+    const check = [...props].every(p => _isClone(x[p], y[p], prefix + `prop[${p}]:`))
     if (!check) return _FALSE("At least one property doesn't match")
 
     const iterable = isIterable(x)
     if (iterable && !(x instanceof String)) { // iterate except if x is a Strings
       const [xo, yo] = [[...x], [...y]]
-      const check = xo.every((v, i) => _isClone(v, yo[i], tab))
+      const check = xo.every((v, i) => _isClone(v, yo[i], prefix + 'iter:'))
       if (!check) { return _FALSE('At least one iterable value is not equal') }
     }
 

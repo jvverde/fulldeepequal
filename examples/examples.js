@@ -109,11 +109,22 @@ assert.eq(s, new Set(s))
 assert.eq(s, new Set([x, a]))
 assert.ne(s, new Set([x, b]))
 
+const set = new Set([1, 2])
+assert.eq(set, new Set([1, 2]))
+set.label = 'label'
+assert.ne(set, new Set([1, 2]))
+
 // Maps
 const m = new Map([[x, a], [y, a]])
 assert.eq(m, new Map(m))
 assert.eq(m, new Map([[x, a], [y, a]]))
 assert.ne(m, new Map([[x, a], [y, b]]))
+
+const map = new Map([[1, 2], [2, 3]])
+assert.eq(map, new Map([[1, 2], [2, 3]]))
+map.label = 'label'
+assert.ne(map, new Map([[1, 2], [2, 3]]))
+
 
 // Class instances
 class C {}
@@ -138,7 +149,7 @@ assert.eq(e, new E(0))
 e.inc = function () {}
 assert.ne(e, new E(0))
 
-// Nested objects
+// Nested objects in class instances
 class DE {
   constructor (i) { this.e = new E(i) }
 }
@@ -160,6 +171,44 @@ assert.eq(x, y)
 x.i = y
 y.i = x
 assert.eq(x, y)
+
+
+// Strictly
+
+// By default two function are equal if and only if they both refere to same code/object)
+const f = function () {}
+const g = function () {}
+assert.ne(f, g)
+assert.eq(f, g, { strictly: false })
+
+const C1 = class {}
+const C2 = class {}
+assert.ne(C1, C2)
+assert.eq(C1, C2, { strictly: false }) // Constructores are distinct but are string (C1.toString() === C2.toString())
+const c1 = new C1()
+const c2 = new C2()
+assert.ne(c1, c2)
+assert.eq(c1, c2, { strictly: false })
+
+class C3 {}
+const c3 = new C3()
+assert.ne(c1, c3, { strictly: true })
+assert.ne(c1, c3, { strictly: false }) // the constructors are different
+
+const C4 = class {
+  // note
+}
+const c4 = new C4()
+assert.ne(c1, c4, { strictly: false }) // the constructors are "stringly" different
+
+const F1 = function (i) { this.i = i }
+const F2 = function (i) { this.i = i }
+assert.ne(F1, F2)
+assert.eq(F1, F2, { strictly: false })
+const f1 = new F1(3)
+const f2 = new F2(3)
+assert.ne(f1, f2)
+assert.eq(f1, f2, { strictly: false })
 
 // Subclasses of builtin types
 const abc = new String('abc')
@@ -197,16 +246,6 @@ class Vector extends Array {}
 assert.eq(new Vector(3), new Vector(3))
 assert.ne(new Vector(3), new Array(3))
 
-const set = new Set([1, 2])
-assert.eq(set, new Set([1, 2]))
-set.label = 'label'
-assert.ne(set, new Set([1, 2]))
-
-const map = new Map([[1, 2], [2, 3]])
-assert.eq(map, new Map([[1, 2], [2, 3]]))
-map.label = 'label'
-assert.ne(map, new Map([[1, 2], [2, 3]]))
-
 // Prototype inheritance
 function A (n = 1) { this.n = n }
 A.prototype.inc = function (n) { this.n += n }
@@ -227,43 +266,6 @@ assert.eq(objb, new B(1))
 assert.ne(objb, obja)
 objb.inc = () => {}
 assert.ne(objb, new B(1))
-
-// Strictly
-
-// By default two function are equal if and only if they both refere to same code/object)
-const f = function () {}
-const g = function () {}
-assert.ne(f, g)
-assert.eq(f, g, { strictly: false })
-
-const C1 = class {}
-const C2 = class {}
-assert.ne(C1, C2)
-assert.eq(C1, C2, { strictly: false }) // Constructores are distinct but are string (C1.toString() === C2.toString())
-const c1 = new C1()
-const c2 = new C2()
-assert.ne(c1, c2)
-assert.eq(c1, c2, { strictly: false })
-
-class C3 {}
-const c3 = new C3()
-assert.ne(c1, c3, { strictly: true })
-assert.ne(c1, c3, { strictly: false }) // the constructors are different
-
-const C4 = class {
-  // note
-}
-const c4 = new C4()
-assert.ne(c1, c4, { strictly: false }) // the constructors are string different
-
-const F1 = function (i) { this.i = i }
-const F2 = function (i) { this.i = i }
-assert.ne(F1, F2)
-assert.eq(F1, F2, { strictly: false })
-const f1 = new F1(3)
-const f2 = new F2(3)
-assert.ne(f1, f2)
-assert.eq(f1, f2, { strictly: false })
 
 // Other cases
 
@@ -287,4 +289,21 @@ class Long extends Int {
 assert.eq(new Long(1), new Long(1))
 assert.ne(new Long(1), new Long(2))
 
-assert.eq(3, Number(3))
+const makeArrowFunction = () => (a) => a + a
+assert.eq(makeArrowFunction(), makeArrowFunction())
+
+const makeFunction = () => {
+  return function (a) { return a + a }
+}
+assert.ne(makeFunction(), makeFunction())
+assert.eq(makeFunction(), makeFunction(), { strictly: false })
+
+const makeClassA = () => class A{}
+const [A1, A2] = [makeClassA(), makeClassA()]
+assert.ne(new A1(), new A2())
+assert.eq(new A1(), new A2(), { strictly: false })
+
+const makeClass = () => class {}
+const [B1, B2] = [makeClass(), makeClass()]
+assert.ne(new B1(), new B2())
+assert.eq(new B1(), new B2(), { strictly: false })
