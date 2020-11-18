@@ -272,19 +272,14 @@ assert.ne(objb, new B(1))
 class Int extends Number {
   constructor (i = 0) {
     super(i)
-    this.label = 'int'
+    this.sqr = this * this
   }
-  get tag() { return this.label }
-  get val() { return this }
+  get osqr() { return this.sqr }
 }
 
 assert.eq(new Int(3), new Int(3))
 
-class Long extends Int {
-  constructor (i = 0) {
-    super(i)
-  }
-}
+class Long extends Int {}
 
 assert.eq(new Long(1), new Long(1))
 assert.ne(new Long(1), new Long(2))
@@ -307,3 +302,26 @@ const makeClass = () => class {}
 const [B1, B2] = [makeClass(), makeClass()]
 assert.ne(new B1(), new B2())
 assert.eq(new B1(), new B2(), { strictly: false })
+
+class Myset extends Set{
+  constructor(v, date = 'December 1, 1995 00:00:00') {
+    super(v)
+    this.date = date
+  }
+}
+
+assert.eq(new Myset(), new Myset())
+
+const makeSet = (date) => {
+  return class extends Set {
+    constructor(v) {
+      super(v)
+      this.date = date
+    }
+  }
+}
+const [DS1, DS2] = [makeSet('December 1, 1995 00:00:00'), makeSet('December 1, 1995 00:00:00')]
+assert.ne(new DS1(), new DS2())
+assert.eq(new DS1(), new DS2(), { strictly: false })
+assert.eq(new DS1([1,2]), new DS2([1,2]), { strictly: false })
+assert.eq(new DS1([1,2, new DS2()]), new DS2([1,2, new DS1()]), { strictly: false })

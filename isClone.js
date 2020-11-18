@@ -115,21 +115,38 @@ const isClone = (x, y, { debug = false, strictly = true } = {}) => {
 
     // Compare every properties
     const props = new Set([...getAllPropertyNames(x), ...getAllPropertyNames(y)])
-    for(const name of ['arguments', 'caller', 'callee']) {
-      // Remove to avoid
+    for(const name of props) {
+      // Remove if is not acccesible or undefined in both
+      // Avoid following types errors
       // TypeError: 'caller', 'callee', and 'arguments' properties may not be
       // accessed on strict mode functions or the arguments objects for calls to them
-      props.delete(name)
+      // TypeError: Method get Set.prototype.size called on incompatible receiver [object Set]
+      let _x, _y
+      try { _x = x[name] } catch {}
+      try { _y = y[name] } catch {}
+      if (_x === _y) { // if it is equal or inaccesible on both just remove it from Set
+        props.delete(name)
+      } else if ( _x === undefined || _y === undefined) {
+        return _FALSE(`Property ${name} is undefined or inaccesible in one of the objects`)
+      }
     }
 
     const check = [...props].every(p => _isClone(x[p], y[p], prefix + `prop[${p}]:`))
-    if (!check) return _FALSE("At least one property doesn't match")
+    if (!check) { return _FALSE("At least one property doesn't match") }
 
     const iterable = isIterable(x)
     if (iterable && !(x instanceof String)) { // iterate except if x is a Strings
-      const [xo, yo] = [[...x], [...y]]
-      const check = xo.every((v, i) => _isClone(v, yo[i], prefix + 'iter:'))
-      if (!check) { return _FALSE('At least one iterable value is not equal') }
+      let xo, yo
+      try { xo = [...x] } catch {}
+      try { yo = [...y] } catch {}
+      if (xo instanceof Array && yo instanceof Array) {
+        const check = xo.every((v, i) => v === yo[i] || _isClone(v, yo[i], prefix + `iter ${i}:`))
+        if (!check) {
+          return _FALSE('At least one iterable value is not equal')
+        }
+      } else if (xo instanceof Array || yo instanceof Array) {
+        return _FALSE('Not both are really iterables')
+      }
     }
 
     if (x instanceof Number || x instanceof Boolean || x instanceof BigInt) {
@@ -154,3 +171,5 @@ const isClone = (x, y, { debug = false, strictly = true } = {}) => {
 }
 
 module.exports = isClone
+module.exports.isLike = (x,y, options) => isClone(x,y, { ...options, strictly: false })
+module.exports.isClone = isClone
