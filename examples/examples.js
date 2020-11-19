@@ -325,3 +325,13 @@ assert.ne(new DS1(), new DS2())
 assert.eq(new DS1(), new DS2(), { strictly: false })
 assert.eq(new DS1([1,2]), new DS2([1,2]), { strictly: false })
 assert.eq(new DS1([1,2, new DS2()]), new DS2([1,2, new DS1()]), { strictly: false })
+
+function clone(obj) {
+  const props = Object.getOwnPropertyDescriptors(obj)
+  const proto = Object.getPrototypeOf(obj)
+  return Object.create(proto, props)
+}
+
+const o1 = Object.create(null)
+const o2 = clone(o1)
+assert.eq(o1, o2)

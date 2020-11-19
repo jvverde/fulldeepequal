@@ -63,8 +63,11 @@ const isClone = (x, y, { debug = false, strictly = true } = {}) => {
 
     // Compare primitives and same objects (Objects assign by reference, not cloned).
     if (x === y) { return _TRUE('x === y') }
-    if (!(x instanceof Object)) { return _FALSE('x is not an obj') }
-    if (!(y instanceof Object)) { return _FALSE('y is not an obj') }
+    if (typeof x !== typeof y) { return _FALSE('typeof is different') }
+    // the "&& typeof x!== 'object'" is need to prevent wrong result for created with Object.create(null)
+    if (!(x instanceof Object) && typeof x!== 'object') { return _FALSE('x is not an obj') }
+    if (!(y instanceof Object) && typeof y!== 'object') { return _FALSE('y is not an obj') }
+    if (x === null || y === null) { return _FALSE('one is null the other is not') }
     if (x.length !== y.length) { return _FALSE('x.length !== y.length') }
     if (!cmpprop(x, y, 'size')) { return _FALSE('x.size !== y.size') }
     if (x.constructor !== y.constructor) {

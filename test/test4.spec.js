@@ -5,7 +5,7 @@ describe('Strictly vs not strictly', () => {
   const n = random.number()
   const s = random.words(10)
   describe('Different objects, but similar toString() values', () => {
-    const makeFunction = () => (a) => a + a
+    const makeFunction = () => function (a) {return a + a }
     const makeClassA = () => class A{}
     const makeClass = () => class {}
     const [A1, A2] = [makeClassA(), makeClassA()]
