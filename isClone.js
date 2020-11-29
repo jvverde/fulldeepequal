@@ -26,11 +26,19 @@ const cntKeys = obj => {
   return 0
 }
 
+const applyMethod = (obj, method) => {
+  try {
+    if (method === 'toString' && typeof obj === 'function') {
+      obj = obj.replace(/^\s+function\s+/,'')
+    }
+    return obj[method]()
+  } catch (e) {
+    return undefined
+  }
+}
+
 const cmpmethod = (x, y, method) => {
-  let a, b
-  try { a = x[method]() } catch (e) { a = undefined }
-  try { b = y[method]() } catch (e) { b = undefined }
-  return a === b
+  return applyMethod(x, method) === applyMethod(y, method)
 }
 
 const cmpprop = (x, y, prop) => {
